@@ -4,6 +4,7 @@
 body{
     font-family: Tahoma, Arial;
     scroll-behavior: smooth;
+    background-color:#aef0a5;
 }
 
 .container{
@@ -269,17 +270,151 @@ hr {
 }
 
 
+
+
 .popup{
     position: fixed;
     background-color: #009688;
-    padding: 10px 20px;
-    width:1000px;
-    left:462px;
+    padding: 15px 25px;
+    width: 90%;
+    max-width: 600px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
     text-align: center;
-    font-size:40px ;
-    border:1px solid #ccc;
+    font-size: 40px;
+    border: 1px solid #ccc;
     color:#fff;
-     transition-duration:4s;
-    transition-delay: 1s;
-    transition-timing-function: ease-in-out; 
+    opacity: 0;
+    pointer-events: none;
+    border-radius: 10px;
+
+    /* Animation */
+    animation: popup-appear 0.6s ease-out forwards;
+}
+
+@keyframes popup-appear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(0.6);
+    }
+    60% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+
+
+
+
+
+
+@media (max-width: 600px) {
+
+  .container {
+    width: 95%;
+    margin: 10px auto;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .game-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .hangman-draw {
+    height: auto;
+    padding: 10px;
+  }
+
+  .thedraw {
+    left: 0 !important;
+    margin: auto;
+  }
+
+  .Theletters {
+    grid-template-columns: repeat(5, 50px);
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .Theletters .letter-box,
+  .Theletters .clicked {
+    font-size: 18px;
+  }
+
+  .theletter-guess {
+    flex-wrap: wrap;
+    min-height: auto;
+    gap: 5px;
+  }
+
+  .theletter-guess span {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 18px;
+  }
+
+  .popup {
+    width: 90%;
+    left: 5%;
+    font-size: 28px;
+    padding: 10px;
+  }
+}
+
+
+
+
+
+@media (max-width: 900px) {
+
+  .container {
+    width: 95%;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .Theletters {
+    grid-template-columns: repeat(6, 55px);
+  }
+
+  .popup {
+    width: 90%;
+    left: 5%;
+    font-size: 30px;
+  }
+}
+
+
+
+
+@media (max-width: 450px) {
+
+  .Theletters {
+    grid-template-columns: repeat(4, 45px);
+    gap: 5px;
+  }
+
+  .theletter-guess span {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .popup {
+    font-size: 24px;
+  }
 }
