@@ -1,169 +1,111 @@
-// letters 
-
+// ============================
+// 1. Generate the alphabet
+// ============================
 let letters = "abcdefghijklmnopqrstuvwxyz";
+let lettersArray = Array.from(letters);
+let lettersContainer = document.querySelector(".Theletters");
 
-// Get array from Element 
-let lettersArray =  Array.from(letters)
-// let lettersArray = letters.split("")
-// console.log(lettersArray);
+// Generate letter boxes
+lettersArray.forEach(letter => {
+  let span = document.createElement("span");
+  let theLetter = document.createTextNode(letter);
+  span.appendChild(theLetter);
+  span.className = "letter-box";
+  lettersContainer.appendChild(span);
+});
 
-// select letter container
-let lettersContainer = document.querySelector(`.Theletters`);
+// ============================
+// 2. Fetch a random word from API
+// ============================
 
-// Generate Letters
-lettersArray .forEach (letter => {
-// create span
-let span = document.createElement("sapn")
-// create  letter  text node
-let theletters = document.createTextNode(letter);
-// append the letter to the span
-span.appendChild(theletters)
-// add class on span
-span.className = 'letter-box'
-//append span to the letters container
+fetch("https://random-word-api.herokuapp.com/word?number=1")
+  .then(res => res.json())
+  .then(data => {
+    let randomValueValue = data[0]; // Random word from API
+    startGame(randomValueValue);
+    console.log(data)
+  })
+  .catch(err => {
+    console.error("Error fetching random word:", err);
+    startGame("fallback"); // fallback word
+  });
 
-lettersContainer.appendChild(span);
-})
+// ============================
+// 3. Main Game Function
+// ============================
+function startGame(randomValueValue) {
+  // Set Category Info
+  document.querySelector(".game-info .category span").innerHTML = "Random";
 
-// object of Words + Categories
- const words = {
-    programming:["php" ,"javascript","go" ,"scala" ,"fortran","r","mysql","python"],
-    movies:["Prestige","Inception","Parasite","Interstellar","Whiplash","Memento","Coco","Up"],
-    people:["Albert Einstein","Cleopatra","Mohamed Salah","Ali Malool",],
-    countries:["Syria","Palestine","Yemen","Egypt","Bahrain","Qatar","chad","Bangaladesh"]
- }
+  // Select Letter Guess Element
+  let letterGuessContainer = document.querySelector(".theletter-guess");
 
- // get Random Property
+  // Convert Chosen Word to Array
+  let lettersAndSpace = Array.from(randomValueValue);
 
- let allKeys = Object.keys(words);
+  // Create spans for each letter
+  lettersAndSpace.forEach(letter => {
+    let emptySpan = document.createElement("span");
 
-//  console.log(allKeys)
+    if (letter === " ") {
+      emptySpan.className = "with-space";
+    }
 
-let randomPropertyNumber = Math.floor(Math.random() * allKeys.length);
-let randomPropertyName = allKeys[randomPropertyNumber];
+    letterGuessContainer.appendChild(emptySpan);
+  });
 
+  // Select guess spans
+  let guessSpans = document.querySelectorAll(".theletter-guess span");
 
-let randomPropertyValue = words[randomPropertyName] ;
+  // Wrong tries counter
+  let wrongTries = 0;
+  let theDraw = document.querySelector(".hangman-draw");
 
-let randomValueNumber = Math.floor(Math.random() * randomPropertyValue.length )
+  // ============================
+  // 4. Handle Clicking on Letters
+  // ============================
+  document.addEventListener("click", e => {
+    let theStatus = false;
 
-let randomValueValue = randomPropertyValue[randomValueNumber];
-
-// set Category Info
-document.querySelector(".game-info .category span").innerHTML = `${randomPropertyName}`
-
-// select Letter Guess Element
-
-let letterGuessContainer =  document.querySelector(`.theletter-guess`);
-// convert Chosen Word to Array
-
-let lettersAndSapce = Array.from(randomValueValue);
-
-// create spans depend on letter
-
-lettersAndSapce.forEach(letter =>{
-   // create emtpy span
-   let emtpyspan = document.createElement("span")
-   // if letter is space
-  if(letter ===" "){
-
-   // add class to span
-   
-   emtpyspan.className ="with-space"
-}
-
-   //append span to letter guess container
-   letterGuessContainer.appendChild(emtpyspan);    
-
-})
-
-// select guess span
-
-let guessSpans = document.querySelectorAll(".theletter-guess span");
-
-
-
-// set Wrong tries
-let wrongTries =0;
-// select the draw Element
-let theDraw = document.querySelector(".hangman-draw")
-
-
-// Handling Clicking On Letters
-document.addEventListener("click" ,e => {
-
-   // set the chose  Status
-   let theStatus = false;
-
-
-   if(e.target.className === "letter-box"){
-
-      e.target.setAttribute("class","clicked");
-
-
-      // Get Clicked Letter
+    if (e.target.className === "letter-box") {
+      e.target.classList.add("clicked");
       let clickedLetter = e.target.innerHTML.toLowerCase();
-
-      //the chosen word
       let theChosenWord = Array.from(randomValueValue.toLowerCase());
 
+      // Check if letter exists in word
+      theChosenWord.forEach((wordLetter, wordIndex) => {
+        if (clickedLetter === wordLetter) {
+          theStatus = true;
+          guessSpans.forEach((span, spanIndex) => {
+            if (wordIndex === spanIndex) span.innerHTML = clickedLetter;
+          });
+        }
+      });
 
-      // Get the chose Word Array
-      theChosenWord.forEach((wordLetter , wordIndex) =>{
+      // If letter not found
+      if (theStatus !== true) {
+        wrongTries++;
+        theDraw.classList.add(`wrong-${wrongTries}`);
+        document.getElementById("fail").play();
 
-         // if the clikced letter is equal to one of the chosen word letter
-
-         if(clickedLetter === wordLetter ){
-            // set the status to correct
-            theStatus = true;
-
-            // loop on All Guess Spans
-            guessSpans.forEach((span,spanIndex)=>{
-               if(wordIndex === spanIndex)
-                     span.innerHTML =  clickedLetter         
-            })
-
-         }
-
-
-      })
-      // oustide loop
-      // if the letter is wrong
-      if(theStatus !== true){
-         //increase the wrong tries
-         wrongTries+=1;
-
-         // add Classworng on the drawElement
-         theDraw.classList.add(`wrong-${wrongTries}`);
-
-         // play fail sound
-         document.getElementById("fail").play();
-
-         if (wrongTries === 8 ){
-            endGame();
-            lettersContainer.classList.add("finished");
-         }
-
-      }else{
-         // play succes sound
-         document.getElementById("success").play();
-         
+        if (wrongTries === 8) {
+          endGame(randomValueValue);
+          lettersContainer.classList.add("finished");
+        }
+      } else {
+        document.getElementById("success").play();
       }
-   }
-})
+    }
+  });
+}
 
-
-//End Game fucntion
-function endGame(){
-   // create Popup Div
-   let div = document.createElement(`div`);
-
-   //create text inside Div
-   let text = document.createTextNode (`Game OverThe Word is ${randomValueValue}`);
-   // append text to div
-   div.appendChild(text);
-   // add class on div
-   div.className = `popup`
-   // Append to the body
-   document.body.appendChild(div);
+// ============================
+// 5. End Game Function
+// ============================
+function endGame(word) {
+  let div = document.createElement("div");
+  let text = document.createTextNode(`Game Over! The word was: ${word}`);
+  div.appendChild(text);
+  div.className = "popup";
+  document.body.appendChild(div);
 }
