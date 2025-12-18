@@ -18,7 +18,7 @@ lettersArray.forEach(letter => {
 // 2. Fetch a random word from API
 // ============================
 
-fetch("https://random-word-api.herokuapp.com/word?number=1")
+fetch("https://random-word-api.vercel.app/api?words=1")
   .then(res => res.json())
   .then(data => {
     let randomValueValue = data[0]; // Random word from API
