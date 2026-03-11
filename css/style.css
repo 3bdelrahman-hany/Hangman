@@ -4,7 +4,18 @@
 body{
     font-family: Tahoma, Arial;
     scroll-behavior: smooth;
-    background-color:#aef0a5;
+    background-color:#4174814d;
+    animation: Fadein ease-in-out .6s;
+}
+@keyframes Fadein{
+    from{
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .container{
